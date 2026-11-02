@@ -5,7 +5,7 @@
 // (stale-while-revalidate), so a new deploy shows up on the next visit. Bump VERSION when
 // the list below changes, so old caches are dropped.
 
-const VERSION = "shell-v13";
+const VERSION = "shell-v14";
 const SHELL = [
   "./",
   "index.html",
@@ -22,6 +22,7 @@ const SHELL = [
   "icons/apple-touch-icon.png",
   "icons/favicon-32.png",
   "icons/splash-logo.png",
+  "icons/splash-logo.svg",
 ];
 
 self.addEventListener("install", (event) => {

@@ -311,7 +311,13 @@ function itemRow(kind, item) {
     </a>`;
 }
 
+function updateClearBtn() {
+  const btn = $("search-clear");
+  if (btn) btn.hidden = !$("q").value;
+}
+
 function renderResults() {
+  updateClearBtn();
   const q = norm($("q").value);
   const out = $("results");
   if (!q) {
@@ -583,9 +589,20 @@ $("sheet-backdrop").addEventListener("click", closeSheet);
 // ---------------------------------------------------------------- events
 
 $("q").addEventListener("input", () => {
+  updateClearBtn();
   state.expanded.clear();
   renderResults();
 });
+const searchClearBtn = $("search-clear");
+if (searchClearBtn) {
+  searchClearBtn.addEventListener("click", () => {
+    $("q").value = "";
+    updateClearBtn();
+    state.expanded.clear();
+    renderResults();
+    $("q").focus();
+  });
+}
 $("q").addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   const first = $("results").querySelector("a.item");

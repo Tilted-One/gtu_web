@@ -5,7 +5,7 @@
 // (stale-while-revalidate), so a new deploy shows up on the next visit. Bump VERSION when
 // the list below changes, so old caches are dropped.
 
-const VERSION = "shell-v7";
+const VERSION = "shell-v8";
 const SHELL = [
   "./",
   "index.html",

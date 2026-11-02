@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="icons/favicon-32.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Uni Hub">
   <link rel="stylesheet" href="style.css">
   <script type="importmap">
@@ -24,6 +24,9 @@
   <script type="module" src="app.js"></script>
 </head>
 <body>
+  <!-- Status bar solid background to eliminate iOS PWA blur/frosted scrim -->
+  <div class="status-bar-bg" aria-hidden="true"></div>
+
   <!-- Screen 1: splash -->
   <div id="splash" class="splash" aria-hidden="true">
     <img src="icons/splash-logo.png" alt="" width="81" height="73">
@@ -31,38 +34,42 @@
 
   <!-- Screen 2: search across groups, teachers and rooms -->
   <main id="search-page" class="page" hidden>
-    <header class="page-head">
-      <div>
-        <h1 data-i18n="title">Uni Hub</h1>
-        <p id="week-line" class="secondary"></p>
-      </div>
-      <div class="head-actions">
-        <span id="offline" class="offline-pill" hidden data-i18n="offline">ოფლაინ</span>
-        <button id="lang" class="lang" type="button" aria-label="Language">EN</button>
-      </div>
-    </header>
+    <div class="search-top">
+      <header class="page-head">
+        <div>
+          <h1 data-i18n="title">Uni Hub</h1>
+          <p id="week-line" class="secondary"></p>
+        </div>
+        <div class="head-actions">
+          <span id="offline" class="offline-pill" hidden data-i18n="offline">ოფლაინ</span>
+          <button id="lang" class="lang" type="button" aria-label="Language">EN</button>
+        </div>
+      </header>
 
-    <label class="search">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search"
-             data-i18n-placeholder="searchPlaceholder">
-    </label>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search"
+               data-i18n-placeholder="searchPlaceholder">
+      </label>
+    </div>
 
     <div id="results" class="results"></div>
   </main>
 
   <!-- Screen 3: one group's / teacher's / room's week -->
   <main id="week-page" class="page" hidden>
-    <header class="week-head">
-      <a class="back" href="#/" data-i18n-aria="back" aria-label="უკან">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-      </a>
-      <h1 id="week-name" class="week-title"></h1>
-      <button id="fav" class="fav" type="button" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8Z"/></svg>
-      </button>
-    </header>
-    <nav id="days" class="days" aria-label="Days"></nav>
+    <div class="week-top">
+      <header class="week-head">
+        <a class="back" href="#/" data-i18n-aria="back" aria-label="უკან">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <h1 id="week-name" class="week-title"></h1>
+        <button id="fav" class="fav" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8Z"/></svg>
+        </button>
+      </header>
+      <nav id="days" class="days" aria-label="Days"></nav>
+    </div>
     <div id="lessons" class="lessons"></div>
   </main>
 

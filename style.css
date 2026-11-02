@@ -13,7 +13,7 @@
   --text-secondary: #4a5565;
   --line: #eceaf5;
   --bg: #ffffff;
-  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
   color-scheme: light;
 }
 
@@ -84,18 +84,6 @@ svg { flex-shrink: 0; pointer-events: none; }
 
 .secondary { color: var(--text-secondary); }
 
-/* Solid status bar background to prevent iOS PWA blur/frosted scrim */
-.status-bar-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: var(--bg);
-  z-index: 50;
-  pointer-events: none;
-}
-
 /* ---------------------------------------------------------------- splash */
 .splash {
   position: fixed;
@@ -138,7 +126,7 @@ svg { flex-shrink: 0; pointer-events: none; }
   height: 100vh;
   height: 100dvh;
   margin: 0 auto;
-  padding: calc(16px + env(safe-area-inset-top, 0px)) 24px 0;
+  padding: 16px 24px 0;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -520,7 +508,7 @@ body.with-a2hs .results { padding-bottom: calc(96px + var(--safe-bottom)); }
   position: fixed;
   z-index: 60;
   left: 50%;
-  top: calc(16px + env(safe-area-inset-top));
+  top: 16px;
   transform: translateX(-50%);
   max-width: calc(100% - 48px);
   padding: 10px 16px;

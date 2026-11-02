@@ -249,7 +249,13 @@ async function hideSplash() {
   splashHidden = true;
   const wait = SPLASH_MIN_MS - (performance.now() - splashStart);
   if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-  $("splash").classList.add("done");
+  const s = $("splash");
+  if (s) {
+    s.classList.add("done");
+    setTimeout(() => {
+      try { s.remove(); } catch {}
+    }, 350);
+  }
 }
 
 // ---------------------------------------------------------------- language
@@ -442,15 +448,6 @@ function renderWeek() {
 
 // ---------------------------------------------------------------- routing
 
-function lockMainScreen() {
-  if (!state.selected && (location.hash === "#/" || location.hash === "" || location.hash === "#")) {
-    try {
-      history.replaceState({ isMain: true }, "", location.pathname + "#/");
-      history.pushState({ isMain: true }, "", location.pathname + "#/");
-    } catch { /* ignore security/file restrictions */ }
-  }
-}
-
 function route() {
   if (!state.tt) return;
   pageview({ path: location.pathname + (location.hash || "") });
@@ -460,7 +457,9 @@ function route() {
   if (!item) {
     state.selected = null;
     render();
-    lockMainScreen();
+    try {
+      history.replaceState({ screen: "main" }, "", location.pathname + "#/");
+    } catch { /* ignore */ }
     return;
   }
   const kind = m[1];
@@ -605,16 +604,32 @@ $("results").addEventListener("click", (e) => {
     renderResults();
   }
 });
-const backBtn = document.querySelector(".back");
-if (backBtn) {
-  backBtn.addEventListener("click", (e) => {
+// Handle clicks on week-page:
+// 1. Back button returns directly to main screen.
+// 2. Table-to-table navigation replaces history entry so swipe-to-go-back returns to main screen!
+$("week-page").addEventListener("click", (e) => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  if (a.classList.contains("back")) {
     e.preventDefault();
     if (document.activeElement && document.activeElement.blur) {
       document.activeElement.blur();
     }
     location.hash = "#/";
-  });
-}
+    return;
+  }
+  const href = a.getAttribute("href");
+  if (href && href.startsWith("#/")) {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
+    try {
+      history.replaceState({ screen: "table" }, "", location.pathname + href);
+    } catch { /* ignore */ }
+    route();
+  }
+});
 $("days").addEventListener("click", (e) => {
   const b = e.target.closest("[data-day]");
   if (!b) return;
@@ -634,11 +649,8 @@ function updateNetwork() {
   $("offline").hidden = navigator.onLine;
 }
 window.addEventListener("popstate", () => {
-  if (!state.selected && (location.hash === "#/" || location.hash === "" || location.hash === "#")) {
-    try {
-      history.pushState({ isMain: true }, "", location.pathname + "#/");
-    } catch { /* ignore */ }
-    return;
+  if (document.activeElement && document.activeElement.blur) {
+    document.activeElement.blur();
   }
   route();
 });
@@ -668,6 +680,12 @@ if ("serviceWorker" in navigator) {
     }
   });
   navigator.serviceWorker.register("sw.js").catch((e) => console.warn("service worker", e));
+}
+
+if (!location.hash || location.hash === "#" || location.hash === "" || location.hash === "#/") {
+  try {
+    history.replaceState({ screen: "main" }, "", location.pathname + "#/");
+  } catch { /* ignore */ }
 }
 
 updateNetwork();

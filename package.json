@@ -1,0 +1,24 @@
+{
+  "name": "gtu_timetable_web",
+  "version": "1.0.0",
+  "description": "Offline-capable web app (PWA) for the GTU timetable produced by [`gtu_timetable_parser`](../gtu_timetable_parser), in the design of the Uni Hub app (`../UniHub/uni-hub-master`: white, purple `#7650FF`, tinted lesson cards, day chips).",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tilted-One/gtu_web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Tilted-One/gtu_web/issues"
+  },
+  "homepage": "https://github.com/Tilted-One/gtu_web#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}

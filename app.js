@@ -1,4 +1,7 @@
+import { inject, pageview } from "@vercel/analytics";
 import { loadCached, loadLatest } from "./db.js";
+
+inject();
 
 const KINDS = ["group", "teacher", "room"];
 const SECTION_LIMIT = 6;
@@ -438,6 +441,7 @@ function renderWeek() {
 
 function route() {
   if (!state.tt) return;
+  pageview({ path: location.pathname + (location.hash || "") });
   const m = location.hash.match(/^#\/(group|teacher|room)\/(.+)$/);
   const item = m && state.tt.find(m[1], decodeURIComponent(m[2]));
   if (m && !item) toast(t("notFound"));

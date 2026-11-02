@@ -237,6 +237,9 @@ function showPage(id) {
   state.page = id;
   for (const p of ["search-page", "week-page", "error-page"]) $(p).hidden = p !== id;
   updateA2hs();
+  if (document.activeElement && document.activeElement.blur) {
+    document.activeElement.blur();
+  }
 }
 
 const splashStart = performance.now();
@@ -439,6 +442,15 @@ function renderWeek() {
 
 // ---------------------------------------------------------------- routing
 
+function lockMainScreen() {
+  if (!state.selected && (location.hash === "#/" || location.hash === "" || location.hash === "#")) {
+    try {
+      history.replaceState({ isMain: true }, "", location.pathname + "#/");
+      history.pushState({ isMain: true }, "", location.pathname + "#/");
+    } catch { /* ignore security/file restrictions */ }
+  }
+}
+
 function route() {
   if (!state.tt) return;
   pageview({ path: location.pathname + (location.hash || "") });
@@ -448,6 +460,7 @@ function route() {
   if (!item) {
     state.selected = null;
     render();
+    lockMainScreen();
     return;
   }
   const kind = m[1];
@@ -469,6 +482,7 @@ function render() {
   } else {
     renderResults();
     showPage("search-page");
+    if (document.activeElement === $("q")) $("q").blur();
   }
 }
 
@@ -582,12 +596,25 @@ $("q").addEventListener("keydown", (e) => {
   }
 });
 $("results").addEventListener("click", (e) => {
+  if (document.activeElement && document.activeElement.blur) {
+    document.activeElement.blur();
+  }
   const more = e.target.closest("[data-more]");
   if (more) {
     state.expanded.add(more.dataset.more);
     renderResults();
   }
 });
+const backBtn = document.querySelector(".back");
+if (backBtn) {
+  backBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
+    location.hash = "#/";
+  });
+}
 $("days").addEventListener("click", (e) => {
   const b = e.target.closest("[data-day]");
   if (!b) return;
@@ -606,9 +633,31 @@ $("retry").addEventListener("click", start);
 function updateNetwork() {
   $("offline").hidden = navigator.onLine;
 }
+window.addEventListener("popstate", () => {
+  if (!state.selected && (location.hash === "#/" || location.hash === "" || location.hash === "#")) {
+    try {
+      history.pushState({ isMain: true }, "", location.pathname + "#/");
+    } catch { /* ignore */ }
+    return;
+  }
+  route();
+});
 window.addEventListener("hashchange", route);
 window.addEventListener("online", () => { updateNetwork(); start(); });
 window.addEventListener("offline", updateNetwork);
+
+// PWA native feel: disable text copy and link preview callout popups
+document.addEventListener("contextmenu", (e) => {
+  if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener("copy", (e) => {
+  if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+    e.preventDefault();
+  }
+});
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch((e) => console.warn("service worker", e));
